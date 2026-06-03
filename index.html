@@ -3,75 +3,112 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Muhammed wael</title>
+    <title>Muhammed wael - Cosmic Profile</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
         
         body { 
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            /* هذي الإضافة الجديدة للخلفية */
-            background-image: url('background.jpg');
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-            background-repeat: no-repeat;
-            background-color: #000;
-            /* طبقة تعتيم فوق الصورة حتى يبرز الزجاج والنص */
-            background-blend-mode: darken;
-            background-color: rgba(0, 0, 0, 0.6);
-            
+            background: 
+                radial-gradient(circle at 70% 20%, rgba(100, 200, 255, 0.15) 0%, rgba(10, 20, 50, 0) 50%), 
+                radial-gradient(circle at 20% 80%, rgba(50, 100, 200, 0.1) 0%, rgba(10, 20, 50, 0) 50%),   
+                linear-gradient(135deg, #01050a 0%, #08102a 100%); 
             color: #ffffff; 
             display: flex; 
             justify-content: center; 
             align-items: center; 
             min-height: 100vh; 
             padding: 20px;
+            overflow: hidden; 
         }
 
+        #starfield {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+            mix-blend-mode: screen; 
+        }
+
+        /* --- كارت الزجاج السائل الشفاف عالي النقاء --- */
         .glass-card {
             width: 100%;
             max-width: 390px;
-            /* زجاج بلوري */
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 36px;
+            /* جعل الخلفية أكثر شفافية ونقاءً لتمرير الضوء والنجوم */
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.01) 100%);
+            
+            /* تقليل البلور (Blur) إلى 12px لتبدو النجوم حادة وواضحة من خلف الزجاج */
+            backdrop-filter: blur(12px) saturate(200%); 
+            -webkit-backdrop-filter: blur(12px) saturate(200%);
+            
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-top: 1px solid rgba(255, 255, 255, 0.4);
+            border-right: 1px solid rgba(255, 255, 255, 0.25);
+            border-radius: 40px;
             padding: 45px 30px;
             text-align: center;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            
+            box-shadow: 
+                inset 0 1px 2px rgba(255, 255, 255, 0.4),   
+                inset 0 -1px 2px rgba(0, 0, 0, 0.2),         
+                0 4px 24px rgba(0, 0, 0, 0.3),               
+                0 32px 64px rgba(0, 0, 0, 0.6);              
+            position: relative;
+            z-index: 1; 
+            overflow: hidden;
+        }
+
+        /* توهج داخلي خفيف جداً لا يحجب النجوم خلفه */
+        .glass-card::before {
+            content: '';
+            position: absolute;
+            top: -30%;
+            right: -30%;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0) 70%);
+            pointer-events: none;
+            z-index: -1;
         }
 
         .avatar {
             width: 115px;
             height: 115px;
-            border-radius: 28px;
+            border-radius: 30px;
             margin: 0 auto 25px;
             overflow: hidden;
-            border: 2px solid rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 
+                0 8px 24px rgba(0, 0, 0, 0.3),
+                inset 0 1px 2px rgba(255, 255, 255, 0.3);
         }
         .avatar img { width: 100%; height: 100%; object-fit: cover; }
         
-        h1 { font-size: 28px; font-weight: 600; margin-bottom: 12px; letter-spacing: -0.5px; }
+        h1 { font-size: 28px; font-weight: 600; margin-bottom: 12px; letter-spacing: -0.5px; color: #ffffff; text-shadow: 0 2px 4px rgba(0,0,0,0.3); }
         
         .bio {
             font-size: 14px;
-            color: #e0e0e0;
+            color: rgba(240, 248, 255, 0.85); 
             line-height: 1.7;
             margin-bottom: 35px;
             font-weight: 500;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.2);
         }
 
         .links-container { display: flex; flex-direction: column; gap: 14px; }
         
+        /* أزرار متناسقة مع شفافية الكارت النقي */
         .link-btn {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.02) 100%);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
             padding: 16px;
-            border-radius: 16px;
+            border-radius: 18px;
             text-decoration: none;
-            color: white;
+            color: rgba(255, 255, 255, 0.95);
             font-weight: 500;
             font-size: 15px;
             display: flex;
@@ -79,16 +116,28 @@
             justify-content: center;
             gap: 12px;
             border: 1px solid rgba(255, 255, 255, 0.1);
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 
+                inset 0 1px 1px rgba(255, 255, 255, 0.15),
+                0 4px 12px rgba(0, 0, 0, 0.15);
+            cursor: pointer;
         }
 
         .link-btn:hover {
-            background: rgba(255, 255, 255, 0.2);
-            transform: translateY(-2px);
-            border-color: rgba(255, 255, 255, 0.3);
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.04) 100%);
+            transform: translateY(-3px);
+            border-color: rgba(255, 255, 255, 0.25);
+            border-top-color: rgba(255, 255, 255, 0.45);
+            box-shadow: 
+                inset 0 1px 2px rgba(255, 255, 255, 0.35),
+                0 12px 24px rgba(0, 0, 0, 0.3);
+            color: #ffffff;
         }
     </style>
 </head>
 <body>
+
+    <canvas id="starfield"></canvas>
 
     <div class="glass-card">
         <div class="avatar">
@@ -113,5 +162,117 @@
         </div>
     </div>
 
+    <script>
+        var canvas = document.getElementById('starfield');
+        var ctx = canvas.getContext('2d');
+        var width, height;
+
+        function resize() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        var mouseX = width / 2;
+        var mouseY = height / 2;
+        
+        window.addEventListener('mousemove', function(e) {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+        });
+
+        window.addEventListener('touchmove', function(e) {
+            if(e.touches.length > 0) {
+                mouseX = e.touches[0].clientX;
+                mouseY = e.touches[0].clientY;
+            }
+        });
+
+        var stars = [];
+        var numStars = 400; 
+        for (var i = 0; i < numStars; i++) {
+            stars.push({
+                x: Math.random() * width,
+                y: Math.random() * height,
+                radius: Math.random() * 1.8, 
+                baseVx: (Math.random() - 0.5) * 0.05, 
+                baseVy: (Math.random() - 0.5) * 0.05,
+                color: Math.random() > 0.8 ? '#e0f7fa' : '#ffffff'
+            });
+        }
+
+        var shootingStars = [];
+        var currentDriftX = 0;
+        var currentDriftY = 0;
+
+        function animate() {
+            ctx.clearRect(0, 0, width, height);
+
+            var desiredDriftX = (mouseX - width / 2) * 0.0005;
+            var desiredDriftY = (mouseY - height / 2) * 0.0005;
+
+            currentDriftX += (desiredDriftX - currentDriftX) * 0.02;
+            currentDriftY += (desiredDriftY - currentDriftY) * 0.02;
+
+            stars.forEach(function(star) {
+                star.x += star.baseVx + currentDriftX;
+                star.y += star.baseVy + currentDriftY;
+
+                if (star.x < 0) star.x = width;
+                if (star.x > width) star.x = 0;
+                if (star.y < 0) star.y = height;
+                if (star.y > height) star.y = 0;
+
+                ctx.fillStyle = star.color;
+                ctx.globalAlpha = (star.radius / 1.8) * 0.8 + 0.15; 
+                ctx.beginPath();
+                ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
+                ctx.fill();
+            });
+            ctx.globalAlpha = 1;
+
+            if (Math.random() < 0.003) {
+                shootingStars.push({
+                    x: Math.random() * width,
+                    y: Math.random() * (height / 2), 
+                    length: Math.random() * 50 + 30, 
+                    speed: Math.random() * 2 + 4, 
+                    angle: Math.PI / 4 + (Math.random() * 0.2 - 0.1), 
+                    opacity: 1
+                });
+            }
+
+            for (var j = shootingStars.length - 1; j >= 0; j--) {
+                var s = shootingStars[j];
+                s.x += Math.cos(s.angle) * s.speed;
+                s.y += Math.sin(s.angle) * s.speed;
+                s.opacity -= 0.01; 
+
+                if (s.opacity <= 0 || s.x > width || s.y > height) {
+                    shootingStars.splice(j, 1);
+                    continue;
+                }
+
+                var tailX = s.x - Math.cos(s.angle) * s.length;
+                var tailY = s.y - Math.sin(s.angle) * s.length;
+
+                var grad = ctx.createLinearGradient(s.x, s.y, tailX, tailY);
+                grad.addColorStop(0, 'rgba(230, 248, 255, ' + s.opacity + ')');
+                grad.addColorStop(1, 'rgba(230, 248, 255, 0)');
+
+                ctx.beginPath();
+                ctx.moveTo(s.x, s.y);
+                ctx.lineTo(tailX, tailY);
+                ctx.strokeStyle = grad;
+                ctx.lineWidth = 1.5;
+                ctx.stroke();
+            }
+
+            requestAnimationFrame(animate);
+        }
+
+        animate();
+    </script>
 </body>
 </html>
