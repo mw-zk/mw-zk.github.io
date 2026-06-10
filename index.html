@@ -34,6 +34,20 @@
             mix-blend-mode: screen; 
         }
 
+        /* أنيميشن الدخول الانسيابي السلس للكارت */
+        @keyframes cosmicEntrance {
+            0% {
+                opacity: 0;
+                transform: scale(0.92) translateY(40px);
+                filter: blur(15px);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+                filter: blur(0);
+            }
+        }
+
         .glass-card {
             width: 100%;
             max-width: 390px;
@@ -56,9 +70,10 @@
             overflow: hidden;
             transform-style: preserve-3d;
             transition: transform 0.1s ease-out;
+            /* استدعاء أنيميشن الدخول */
+            animation: cosmicEntrance 1.2s cubic-bezier(0.16, 1, 0.3, 1) backwards;
         }
 
-        /* تعديلات مخصصة للهواتف لضمان تناسب الكارت والحواف */
         @media (max-width: 480px) {
             .glass-card {
                 padding: 35px 20px;
@@ -187,35 +202,10 @@
         var mouseY = height / 2;
         var card = document.querySelector('.glass-card');
         
+        // 1. حركة النجوم بالخلفية مربوطة بالنافذة بالكامل (تأثير انسيابي ممتاز)
         window.addEventListener('mousemove', function(e) {
             mouseX = e.clientX;
             mouseY = e.clientY;
-
-            var rect = card.getBoundingClientRect();
-            var x = e.clientX - rect.left; 
-            var y = e.clientY - rect.top;  
-            
-            var centerX = rect.width / 2;
-            var centerY = rect.height / 2;
-            
-            var rotateX = ((y - centerY) / centerY) * -10; 
-            var rotateY = ((x - centerX) / centerX) * 10;
-            
-            card.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
-            
-            card.style.setProperty('--x', `${x}px`);
-            card.style.setProperty('--y', `${y}px`);
-        });
-
-        card.addEventListener('mouseleave', function() {
-            card.style.transform = 'rotateX(0deg) rotateY(0deg)';
-            card.style.setProperty('--x', `50%`);
-            card.style.setProperty('--y', `50%`);
-            card.style.transition = 'transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), background 0.6s ease';
-        });
-
-        card.addEventListener('mouseenter', function() {
-            card.style.transition = 'transform 0.1s ease-out, background 0.1s ease-out';
         });
 
         window.addEventListener('touchmove', function(e) {
@@ -225,16 +215,71 @@
             }
         });
 
-        // فحص ما إذا كان المستخدم يفتح الموقع من هاتف
-        var isMobile = window.innerWidth <= 480;
+        // 2. تأثير دوران الكارت واللمعان يعمل فقط وحصرياً عند تحريك الماوس فوق الكارت نفسه
+        card.addEventListener('mousemove', function(e) {
+            var rect = card.getBoundingClientRect();
+            var x = e.clientX - rect.left; 
+            var y = e.clientY - rect.top;  
+            
+            var centerX = rect.width / 2;
+            var centerY = rect.height / 2;
+            
+            // حساب الزوايا لتنجذب الجهة نحو الماوس وتبرز للأمام
+            var rotateX = ((y - centerY) / centerY) * 10; 
+            var rotateY = ((x - centerX) / centerX) * -10;
+            
+            card.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+            
+            card.style.setProperty('--x', `${x}px`);
+            card.style.setProperty('--y', `${y}px`);
+        });
 
+        // 3. عند خروج الماوس من الكارت، يعود فوراً لنقطة الصفر بشكل ناعم دون تداخل
+        card.addEventListener('mouseleave', function() {
+            card.style.transform = 'rotateX(0deg) rotateY(0deg)';
+            card.style.setProperty('--x', `50%`);
+            card.style.setProperty('--y', `50%`);
+            card.style.transition = 'transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), background 0.5s ease';
+        });
+
+        card.addEventListener('mouseenter', function() {
+            card.style.transition = 'transform 0.1s ease-out, background 0.1s ease-out';
+        });
+
+        // دعم إضافي للمس على الهواتف لضمان عدم حدوث مشاكل في الأبعاد
+        card.addEventListener('touchmove', function(e) {
+            if(e.touches.length > 0) {
+                var t = e.touches[0];
+                var rect = card.getBoundingClientRect();
+                var x = t.clientX - rect.left;
+                var y = t.top - rect.top;
+                
+                if (x >= 0 && x <= rect.width && y >= 0 && y <= rect.height) {
+                    var centerX = rect.width / 2;
+                    var centerY = rect.height / 2;
+                    var rotateX = ((y - centerY) / centerY) * 10;
+                    var rotateY = ((x - centerX) / centerX) * -10;
+                    
+                    card.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+                    card.style.setProperty('--x', `${x}px`);
+                    card.style.setProperty('--y', `${y}px`);
+                }
+            }
+        });
+
+        card.addEventListener('touchend', function() {
+            card.style.transform = 'rotateX(0deg) rotateY(0deg)';
+            card.style.setProperty('--x', `50%`);
+            card.style.setProperty('--y', `50%`);
+            card.style.transition = 'transform 0.5s cubic-bezier(0.16, 1, 0.3, 1)';
+        });
+
+        var isMobile = window.innerWidth <= 480;
         var stars = [];
-        var numStars = isMobile ? 250 : 400; // تقليل عدد النجوم قليلاً في الهاتف لراحة العين والأداء
+        var numStars = isMobile ? 250 : 400; 
         
         for (var i = 0; i < numStars; i++) {
-            // إذا كان هاتف، الحد الأقصى للحجم هو 0.9، أما الكمبيوتر فيبقى 1.8 كما هو
             var maxRadius = isMobile ? 0.9 : 1.8; 
-            
             stars.push({
                 x: Math.random() * width,
                 y: Math.random() * height,
@@ -268,7 +313,6 @@
                 if (star.y > height) star.y = 0;
 
                 ctx.fillStyle = star.color;
-                // تعديل الشفافية لتتناسب مع الحجم الجديد في الهواتف
                 var maxRadius = isMobile ? 0.9 : 1.8;
                 ctx.globalAlpha = (star.radius / maxRadius) * 0.8 + 0.15; 
                 ctx.beginPath();
@@ -278,9 +322,7 @@
             ctx.globalAlpha = 1;
 
             if (Math.random() < 0.003) {
-                // جعل الشهب أصغر وأقصر قليلاً في الهواتف لتظهر بشكل متناسق
                 var starLength = isMobile ? (Math.random() * 25 + 15) : (Math.random() * 50 + 30);
-                
                 shootingStars.push({
                     x: Math.random() * width,
                     y: Math.random() * (height / 2), 
@@ -313,7 +355,6 @@
                 ctx.moveTo(s.x, s.y);
                 ctx.lineTo(tailX, tailY);
                 ctx.strokeStyle = grad;
-                // جعل خط الشهاب أنحف في الهاتف
                 ctx.lineWidth = isMobile ? 1.0 : 1.5;
                 ctx.stroke();
             }
